@@ -44,7 +44,6 @@ class OfferService:
             "is_active": True,
             "raw_json": json.loads(offer.model_dump_json()),
         }
-    
 
     @staticmethod
     async def save_offers(session: AsyncSession, payload: OffersDataIn):

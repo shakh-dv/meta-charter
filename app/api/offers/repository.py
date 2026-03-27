@@ -1,11 +1,6 @@
-
-
-
 from sqlalchemy import select, and_, or_
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.sql import func
-
 from app.models.offers import Offer
 
 
