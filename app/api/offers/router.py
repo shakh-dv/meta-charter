@@ -18,7 +18,7 @@ async def import_offers(payload: OffersDataIn, session: AsyncSession = Depends(g
 
 
 from typing import List
-from app.api.offers.schemas import OfferIn
+from app.api.offers.schemas import  OffersSearchResponse
 
 @router.get("/export")
 async def export_offers(session: AsyncSession = Depends(get_session)):
@@ -29,11 +29,11 @@ async def export_offers(session: AsyncSession = Depends(get_session)):
 # --- Новый endpoint поиска ---
 
 
-@router.post("/search")
+@router.post("/search", response_model=OffersSearchResponse)
 async def search_offers(
     search: OfferSearchRequest,
     session: AsyncSession = Depends(get_session),
 ):
-    data = await OfferService.search_offers(session, search)
-    return data
+    offers = await OfferService.search_offers(session, search)
+    return {"count": len(offers), "offers": offers}
 

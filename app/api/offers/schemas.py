@@ -25,36 +25,65 @@ class OfferSearchRequest(BaseModel):
 class ProviderIn(BaseModel):
     provider_id: str
 
+    model_config = {
+        "extra": "allow"
+    }
+
 
 class SegmentIn(BaseModel):
     departure_city_code: str
     arrival_city_code: str
     departure_date: date
 
+    model_config = {
+        "extra": "allow"
+    }
+
 
 class RouteIn(BaseModel):
     segments: list[SegmentIn]
+
+    model_config = {
+        "extra": "allow"
+    }
 
 
 class PriceInfoIn(BaseModel):
     price: float
     currency: str
 
+    model_config = {
+        "extra": "allow"
+    }
+
 
 class OfferIn(BaseModel):
     offer_id: str
-    provider: ProviderIn
-    routes: list[RouteIn]
     price_info: PriceInfoIn
-    adt: Optional[int] = 1
-    chd: Optional[int] = 0
-    inf: Optional[int] = 0
-    ins: Optional[int] = 0
-    class_: Optional[str] = None
-    direct: Optional[bool] = False
+    price_details: list[dict]
+    baggages_info: list[dict]
+    fares_info: list[dict]
+    routes: list[RouteIn]
+    provider: ProviderIn
+    supplier_provider: dict
+
+
+    """
+        Если нужно разрешить дополнительные поля — раскомментируйте model_config с extra="allow".
+        Если нужно запретить лишние поля — оставьте как есть (по умолчанию extra="forbid").
+    """
+    # model_config = {
+    #     "extra": "allow"
+    # }
 
 
 class OffersDataIn(BaseModel):
+    offers: list[OfferIn]
+
+
+# --- Response schema for /offers/search ---
+class OffersSearchResponse(BaseModel):
+    count: int
     offers: list[OfferIn]
 
 
