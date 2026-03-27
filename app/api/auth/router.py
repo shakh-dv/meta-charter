@@ -11,14 +11,12 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 @router.post("/register")
 async def register(data: RegisterIn, session: AsyncSession = Depends(get_session)):
     token = await AuthService.register(session=session, data=data)
-    # return api_response(data=token.model_dump())
     return token
 
 
 @router.post("/login")
 async def login(data: LoginIn, session: AsyncSession = Depends(get_session)):
     token = await AuthService.login(session=session, email=data.email, password=data.password)
-    # return api_response(data=token.model_dump())
     return token
 
 

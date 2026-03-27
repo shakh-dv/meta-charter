@@ -5,9 +5,10 @@ from app.api.offers.schemas import OffersDataIn, OfferSearchRequest
 from app.api.offers.service import OfferService
 from app.db.session import get_session
 from app.api.offers.schemas import  OffersSearchResponse
+from app.api.deps import get_current_user
 
 
-router = APIRouter(prefix="/offers", tags=["offers"])
+router = APIRouter(prefix="/offers", tags=["offers"], dependencies=[Depends(get_current_user)])
 
 
 @router.post("/import")
@@ -27,8 +28,8 @@ async def export_offers(session: AsyncSession = Depends(get_session)):
 @router.post("/search", response_model=OffersSearchResponse)
 async def search_offers(
     search: OfferSearchRequest,
-    session: AsyncSession = Depends(get_session),
-):
+    session: AsyncSession = Depends(get_session)
+ ):
     offers = await OfferService.search_offers(session, search)
     return {"count": len(offers), "offers": offers}
 

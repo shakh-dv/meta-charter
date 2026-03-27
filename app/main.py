@@ -2,6 +2,7 @@
 from fastapi.exceptions import RequestValidationError
 import uvicorn
 from fastapi import Depends, FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from app.core.response import api_response
 from starlette.exceptions import HTTPException as StarletteHTTPException
 import logging
@@ -16,6 +17,20 @@ from app.db.session import get_session
 app = FastAPI()
 app.include_router(offers_router)
 app.include_router(auth_router)
+
+
+origins = [
+    "https://example.com",
+   
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.exception_handler(RequestValidationError)

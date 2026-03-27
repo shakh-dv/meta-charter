@@ -14,10 +14,6 @@ from app.db.session import get_session
 
 
 class AuthService:
-    
-    oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
-
-    # --- Password utils ---
 
     @staticmethod
     def hash_password(plain_password: str) -> str:
@@ -28,42 +24,41 @@ class AuthService:
     def verify_password(plain_password: str, hashed_password: str) -> bool:
         matched = bcrypt.checkpw(plain_password.encode(), hashed_password.encode())
         return matched
+    
+    
+    @staticmethod
+    def _generate_token(payload: dict, expires_delta: timedelta) -> str:
+        to_encode = payload.copy()
+        expire = datetime.now(timezone.utc) + expires_delta
+        to_encode.update({"exp": expire})
+        return jwt.encode(
+            to_encode, 
+            settings.JWT_SECRET_KEY.get_secret_value(), 
+            algorithm=settings.JWT_ALGORITHM
+        )
 
-    # --- JWT utils ---
 
     @staticmethod
     def create_access_token(payload: dict) -> str:
-        to_encode = payload.copy()
-        expire = datetime.now(timezone.utc) + timedelta(minutes=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
-        to_encode.update({"exp": expire})
-
-        encoded = jwt.encode(
-            to_encode, 
-            settings.JWT_SECRET_KEY.get_secret_value(), 
-            algorithm=settings.JWT_ALGORITHM
-        )
-
-        return encoded
+        return AuthService._generate_token(
+        payload, timedelta(minutes=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
+    )
     
     @staticmethod
     def create_refresh_token(payload: dict) -> str:
-        to_encode = payload.copy()
-        expire = datetime.now(timezone.utc) + timedelta(days=settings.JWT_REFRESH_TOKEN_EXPIRE_DAYS)
-        to_encode.update({"exp": expire})
-
-        encoded = jwt.encode(
-            to_encode, 
-            settings.JWT_SECRET_KEY.get_secret_value(), 
-            algorithm=settings.JWT_ALGORITHM
-        )
-
-        return encoded
+        return AuthService._generate_token(
+        payload, timedelta(days=settings.JWT_REFRESH_TOKEN_EXPIRE_DAYS)
+    )
         
 
     @staticmethod
     def decode_access_token(token: str) -> dict:
         try:
-            payload = jwt.decode(token, settings.JWT_SECRET_KEY.get_secret_value(), algorithms=[settings.JWT_ALGORITHM])
+            payload = jwt.decode(
+                token, 
+                settings.JWT_SECRET_KEY.get_secret_value(), 
+                algorithms=[settings.JWT_ALGORITHM]
+            )
             
             return payload
         except jwt.ExpiredSignatureError:
@@ -71,20 +66,7 @@ class AuthService:
         except jwt.InvalidTokenError:
             raise HTTPException(status_code=401, detail='Invalid token')
         
-
-    async def get_current_user(token: str = Depends(oauth2_scheme), session: AsyncSession = Depends(get_session)):
-        try:
-            payload = AuthService.decode_access_token(token=token)
-
-            user = await AuthRepository.get_by_email(session=session, email=payload['sub'])
-            if not user:
-                raise HTTPException(status_code=401, detail='User not found')
-            return user
-        except Exception:
-            raise HTTPException(status_code=401, detail='Invalid credentials')
         
-
-    # --- Use-cases ---
 
     @staticmethod
     async def register(session: AsyncSession, data: RegisterIn) -> TokenOut:
