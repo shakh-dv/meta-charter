@@ -2,16 +2,20 @@
 from datetime import datetime, timedelta, timezone
 
 import bcrypt
+from fastapi.security import OAuth2PasswordBearer
 import jwt
-from fastapi import HTTPException
+from fastapi import Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.auth.repository import AuthRepository
 from app.api.auth.schemas import RegisterIn, TokenOut
 from app.core.config import settings
+from app.db.session import get_session
 
 
 class AuthService:
+    
+    oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
     # --- Password utils ---
 
@@ -40,6 +44,20 @@ class AuthService:
         )
 
         return encoded
+    
+    @staticmethod
+    def create_refresh_token(payload: dict) -> str:
+        to_encode = payload.copy()
+        expire = datetime.now(timezone.utc) + timedelta(days=settings.JWT_REFRESH_TOKEN_EXPIRE_DAYS)
+        to_encode.update({"exp": expire})
+
+        encoded = jwt.encode(
+            to_encode, 
+            settings.JWT_SECRET_KEY.get_secret_value(), 
+            algorithm=settings.JWT_ALGORITHM
+        )
+
+        return encoded
         
 
     @staticmethod
@@ -52,6 +70,18 @@ class AuthService:
             raise HTTPException(status_code=401, detail='Token expired')
         except jwt.InvalidTokenError:
             raise HTTPException(status_code=401, detail='Invalid token')
+        
+
+    async def get_current_user(token: str = Depends(oauth2_scheme), session: AsyncSession = Depends(get_session)):
+        try:
+            payload = AuthService.decode_access_token(token=token)
+
+            user = await AuthRepository.get_by_email(session=session, email=payload['sub'])
+            if not user:
+                raise HTTPException(status_code=401, detail='User not found')
+            return user
+        except Exception:
+            raise HTTPException(status_code=401, detail='Invalid credentials')
         
 
     # --- Use-cases ---
@@ -67,9 +97,11 @@ class AuthService:
 
         create_user = await AuthRepository.create_user(session, data.email, hashed_password=hashed_password)
 
-        token = AuthService.create_access_token({'sub': create_user.email})
+        access_token = AuthService.create_access_token({'sub': create_user.email})
 
-        return TokenOut(access_token=token)
+        refresh_token = AuthService.create_refresh_token({'sub': create_user.email})
+
+        return TokenOut(access_token=access_token, refresh_token=refresh_token)
 
 
         
@@ -87,8 +119,9 @@ class AuthService:
         if not credentials_match:
             raise HTTPException(status_code=401, detail='Invalid email or password')
 
-        token = AuthService.create_access_token({'sub': user.email})
-        return TokenOut(access_token=token)
+        access_token = AuthService.create_access_token({'sub': user.email})
+        refresh_token = AuthService.create_refresh_token({'sub': user.email})
+        return TokenOut(access_token=access_token, refresh_token=refresh_token)
 
        
 
