@@ -1,7 +1,7 @@
 import uuid
 
-from sqlalchemy import JSON, TIMESTAMP, Boolean, Column, Date, Index, Numeric, String
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import TIMESTAMP, Boolean, Column, Date, Index, Numeric, String
+from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.sql import func
 
 from app.db.base import Base
@@ -18,23 +18,26 @@ class Offer(Base):
     origin = Column(String, nullable=False)
     destination = Column(String, nullable=False)
     departure_date = Column(Date, nullable=False)
-
+    return_date = Column(Date, nullable=True)
     price = Column(Numeric, nullable=False)
     currency = Column(String)
 
+
+    available_seats = Column(Numeric, default=0, nullable=False)
     # Новые поля для фильтрации
     adt = Column(Numeric, nullable=False, default=1)
     chd = Column(Numeric, nullable=False, default=0)
     inf = Column(Numeric, nullable=False, default=0)
     ins = Column(Numeric, nullable=False, default=0)
-    class_ = Column(String(2), nullable=True)
+    booking_class = Column(String(2), nullable=True)
     direct = Column(Boolean, nullable=False, default=False)
 
     is_active = Column(Boolean, default=True, nullable=False)
 
-    raw_json = Column(JSON, nullable=False)
+    raw_json = Column(JSONB, nullable=False)
 
     created_at = Column(TIMESTAMP, server_default=func.now())
+    updated_at = Column(TIMESTAMP, server_default=func.now(), onupdate=func.now())
 
 
     __table_args__ = (

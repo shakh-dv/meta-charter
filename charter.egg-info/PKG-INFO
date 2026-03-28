@@ -12,3 +12,4 @@ Requires-Dist: pydantic-settings<3.0,>=2.13
 Requires-Dist: pyjwt[crypto]<3.0,>=2.8
 Requires-Dist: bcrypt<5.0,>=4.0
 Requires-Dist: email-validator>=2.3.0
+Requires-Dist: apscheduler>=3.11.2

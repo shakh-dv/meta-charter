@@ -7,3 +7,4 @@ pydantic-settings<3.0,>=2.13
 pyjwt[crypto]<3.0,>=2.8
 bcrypt<5.0,>=4.0
 email-validator>=2.3.0
+apscheduler>=3.11.2

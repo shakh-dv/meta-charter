@@ -1,18 +1,18 @@
-"""init
+"""initial_migration
 
-Revision ID: 2b2e26e7e3d5
+Revision ID: 165c9fab873a
 Revises: 
-Create Date: 2026-03-26 17:16:41.806767
+Create Date: 2026-03-28 17:35:15.576357
 
 """
 from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
-
+from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision: str = '2b2e26e7e3d5'
+revision: str = '165c9fab873a'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -28,17 +28,20 @@ def upgrade() -> None:
     sa.Column('origin', sa.String(), nullable=False),
     sa.Column('destination', sa.String(), nullable=False),
     sa.Column('departure_date', sa.Date(), nullable=False),
+    sa.Column('return_date', sa.Date(), nullable=True),
     sa.Column('price', sa.Numeric(), nullable=False),
     sa.Column('currency', sa.String(), nullable=True),
+    sa.Column('available_seats', sa.Numeric(), nullable=False),
     sa.Column('adt', sa.Numeric(), nullable=False),
     sa.Column('chd', sa.Numeric(), nullable=False),
     sa.Column('inf', sa.Numeric(), nullable=False),
     sa.Column('ins', sa.Numeric(), nullable=False),
-    sa.Column('class_', sa.String(length=2), nullable=True),
+    sa.Column('booking_class', sa.String(length=2), nullable=True),
     sa.Column('direct', sa.Boolean(), nullable=False),
     sa.Column('is_active', sa.Boolean(), nullable=False),
-    sa.Column('raw_json', sa.JSON(), nullable=False),
+    sa.Column('raw_json', postgresql.JSONB(astext_type=sa.Text()), nullable=False),
     sa.Column('created_at', sa.TIMESTAMP(), server_default=sa.text('now()'), nullable=True),
+    sa.Column('updated_at', sa.TIMESTAMP(), server_default=sa.text('now()'), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index('idx_active_true', 'offers', ['origin', 'destination', 'departure_date', 'price'], unique=False, postgresql_where=sa.text('is_active IS true'))

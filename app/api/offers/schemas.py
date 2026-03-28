@@ -12,14 +12,31 @@ class DirectionSearchIn(BaseModel):
 
 class OfferSearchRequest(BaseModel):
     directions: List[DirectionSearchIn]
-    adt: Optional[int] = None
-    chd: Optional[int] = None
-    inf: Optional[int] = None
-    ins: Optional[int] = None
-    class_: Optional[str] = None  # Класс перелёта (E, B, ...)
+    adt: int = 1 
+    chd: int = 0
+    inf: int = 0
+    ins: int = 0
+    
+    booking_class: Optional[str] = None  # Класс перелёта (E, B, ...)
     direct: Optional[bool] = None
     airlines: Optional[List[str]] = None
     provider: Optional[str] = None
+
+
+class PriceDetailIn(BaseModel):
+    passenger_type: str
+
+    model_config = {
+        "extra": "allow"
+    }
+
+
+class FareInfoIn(BaseModel):
+    seats: int
+    booking_class: Optional[str] = None
+
+    model_config = {"extra": "allow"}
+
 
 
 class ProviderIn(BaseModel):
@@ -60,9 +77,9 @@ class PriceInfoIn(BaseModel):
 class OfferIn(BaseModel):
     offer_id: str
     price_info: PriceInfoIn
-    price_details: list[dict]
+    price_details: list[PriceDetailIn]
+    fares_info: list[FareInfoIn]
     baggages_info: list[dict]
-    fares_info: list[dict]
     routes: list[RouteIn]
     provider: ProviderIn
     supplier_provider: dict

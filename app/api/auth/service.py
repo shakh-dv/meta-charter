@@ -104,10 +104,23 @@ class AuthService:
         access_token = AuthService.create_access_token({'sub': user.email})
         refresh_token = AuthService.create_refresh_token({'sub': user.email})
         return TokenOut(access_token=access_token, refresh_token=refresh_token)
+    
 
-       
+    @staticmethod
+    async def refresh_tokens(session: AsyncSession, refresh_token: str) -> TokenOut:
+        payload = AuthService.decode_access_token(token=refresh_token)
 
-
-
+        email: str = payload.get('sub')
+        if not email:
+            raise HTTPException(status_code=401, detail='Invalid refresh token')
         
+        user = await AuthRepository.get_by_email(session=session, email=email)
+
+        if not user:
+            raise HTTPException(status_code=401, detail='User not found')
+        
+        access_token = AuthService.create_access_token({'sub': user.email})
+        new_refresh_token = AuthService.create_refresh_token({'sub': user.email})
+
+        return TokenOut(access_token=access_token, refresh_token=new_refresh_token)
 
