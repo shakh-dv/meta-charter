@@ -18,9 +18,10 @@ from app.db.session import get_session
 from app.core.response import api_response
 
 
+
+# Cron-Jobs
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-  
     scheduler = AsyncIOScheduler()
     
    
