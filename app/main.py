@@ -9,9 +9,8 @@ from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-
-from app.api.offers.service import OfferService
+from app.core.logger import logger
+from app.db.session import engine
 from app.api.offers.router import router as offers_router
 from app.api.auth.router import router as auth_router
 from app.db.session import get_session
@@ -19,27 +18,20 @@ from app.core.response import api_response
 
 
 
-# Cron-Jobs
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    scheduler = AsyncIOScheduler()
+    logger.info("--- API Startup ---")
     
-   
-    scheduler.add_job(
-        OfferService.run_cleanup,
-        'interval',
-        hours=2,
-        id='cleanup_task',
-        replace_existing=True
-    )
+    try:
+        async with engine.begin() as conn:
+            await conn.execute(text("SELECT 1"))
+        logger.info("Database connection: OK")
+    except Exception as e:
+        logger.error(f"Database connection failed: {e}")
 
-    scheduler.start()
-    logging.info('APScheduler запущен: очистка кэша каждые 2 часа.')
-
-    yield  
-
-    scheduler.shutdown()
-    logging.info("APScheduler остановлен.")
+    yield 
 
 
 app = FastAPI(lifespan=lifespan)

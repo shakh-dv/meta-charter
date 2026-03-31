@@ -1,6 +1,7 @@
 README.md
 pyproject.toml
 app/main.py
+app/worker.py
 app/api/deps.py
 app/api/auth/repository.py
 app/api/auth/router.py
@@ -11,6 +12,7 @@ app/api/offers/router.py
 app/api/offers/schemas.py
 app/api/offers/service.py
 app/core/config.py
+app/core/logger.py
 app/core/response.py
 app/db/base.py
 app/db/session.py

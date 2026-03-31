@@ -11,7 +11,7 @@ from app.api.deps import get_current_user
 router = APIRouter(
     prefix="/offers", 
     tags=["offers"], 
-    # dependencies=[Depends(get_current_user)]
+    dependencies=[Depends(get_current_user)] # auth middleware
 )
 
 

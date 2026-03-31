@@ -1,4 +1,4 @@
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 
 from sqlalchemy import delete, func, select, and_, or_
 from sqlalchemy.dialects.postgresql import insert
@@ -93,24 +93,18 @@ class OfferRepository:
     
 
     @staticmethod
-    async def clear_expired_offers(session: AsyncSession, max_age_minutes: int = 60):
+    async def clear_expired_offers(session: AsyncSession):
         """
         Удаляет записи из БД:
         1. Которые уже вылетили (departure_date < сегодня)
         2. Которые не обновлялись более чем max_age_minutes
         """
-
-        threshold = datetime.now() - timedelta(minutes=max_age_minutes)
-
+        today = datetime.now(timezone.utc).date()
         stmt = delete(Offer).where(
-            or_(
-                Offer.departure_date < date.today(),
-                Offer.updated_at < threshold
-            )
+            Offer.departure_date < today,
         )
 
         result = await session.execute(stmt)
-        await session.commit()
         return result.rowcount
 
         

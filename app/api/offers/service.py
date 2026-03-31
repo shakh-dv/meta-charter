@@ -118,7 +118,7 @@ class OfferService:
         # Создаем новую сессию вручную, так как это не HTTP-запрос
         async with AsyncSessionLocal() as session:
             try:
-                deleted_count = await OfferRepository.clear_expired_offers(session, max_age_minutes=60)
+                deleted_count = await OfferRepository.clear_expired_offers(session)
                 await session.commit()
                 logger.info(f"Очистка завершена. Удалено: {deleted_count} записей.")
             except Exception as e:
