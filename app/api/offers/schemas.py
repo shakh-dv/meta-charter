@@ -96,10 +96,6 @@ class OfferIn(BaseModel):
     supplier_provider: dict
 
 
-    """
-        Если нужно разрешить дополнительные поля — раскомментируйте model_config с extra="allow".
-        Если нужно запретить лишние поля — оставьте как есть (по умолчанию extra="forbid").
-    """
     model_config = {
         "extra": "allow"
     }
