@@ -1,14 +1,10 @@
-# app/api/offers/service.py
-
 import asyncio
-import logging
 
 from fastapi import HTTPException
 import httpx
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.offers.external_client import GlobalTravelClient
-from app.api.offers.mapper import OfferMapper
 from app.api.offers.repository import OfferRepository
 from app.api.offers.schemas import OfferIn, OfferSearchRequest, OffersDataIn
 from app.db.session import AsyncSessionLocal
