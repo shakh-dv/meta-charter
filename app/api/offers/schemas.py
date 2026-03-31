@@ -3,7 +3,7 @@
 from typing import Optional, List
 from datetime import date
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 class DirectionSearchIn(BaseModel):
     departure: str
@@ -17,10 +17,15 @@ class OfferSearchRequest(BaseModel):
     inf: int = 0
     ins: int = 0
     
-    booking_class: Optional[str] = None  # Класс перелёта (E, B, ...)
-    direct: Optional[bool] = None
-    airlines: Optional[List[str]] = None
-    provider: Optional[str] = None
+    booking_class: Optional[str] = Field(None, alias="class")
+    direct: Optional[bool] = False
+    flexible: Optional[bool] = True
+    airlines: Optional[List[str]] = []
+    passengers_ids: Optional[list[str]] = []
+
+    model_config = {
+        "populate_by_name": True
+    }
 
 
 class PriceDetailIn(BaseModel):

@@ -11,7 +11,7 @@ from app.api.deps import get_current_user
 router = APIRouter(
     prefix="/offers", 
     tags=["offers"], 
-    dependencies=[Depends(get_current_user)] # auth middleware
+    # dependencies=[Depends(get_current_user)] # auth middleware
 )
 
 
@@ -29,7 +29,7 @@ async def export_offers(session: AsyncSession = Depends(get_session)):
 
 
 
-@router.post("/search", response_model=OffersSearchResponse)
+@router.post("/search")
 async def search_offers(
     search: OfferSearchRequest,
     session: AsyncSession = Depends(get_session)
