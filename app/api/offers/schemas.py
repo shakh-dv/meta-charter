@@ -46,6 +46,8 @@ class FareInfoIn(BaseModel):
 
 class ProviderIn(BaseModel):
     provider_id: str
+    name: str
+    is_charter: bool
 
     model_config = {
         "extra": "allow"
@@ -82,6 +84,10 @@ class PriceInfoIn(BaseModel):
 class OfferIn(BaseModel):
     offer_id: str
     price_info: PriceInfoIn
+    upsell: bool
+    booking: bool
+    is_baggage_info_provided_by_pax: bool
+    is_no_changing_airport: bool
     price_details: list[PriceDetailIn]
     fares_info: list[FareInfoIn]
     baggages_info: list[dict]
@@ -94,9 +100,9 @@ class OfferIn(BaseModel):
         Если нужно разрешить дополнительные поля — раскомментируйте model_config с extra="allow".
         Если нужно запретить лишние поля — оставьте как есть (по умолчанию extra="forbid").
     """
-    # model_config = {
-    #     "extra": "allow"
-    # }
+    model_config = {
+        "extra": "allow"
+    }
 
 
 class OffersDataIn(BaseModel):

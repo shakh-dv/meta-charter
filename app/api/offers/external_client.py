@@ -76,5 +76,6 @@ class GlobalTravelClient:
             logger.error("External API 5xx", status=resp.status_code, body=resp.text)
 
         resp.raise_for_status()
-        return resp.json()
+        result = resp.json()
+        return result['data']['offers']
     

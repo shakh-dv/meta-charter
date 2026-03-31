@@ -29,7 +29,7 @@ async def export_offers(session: AsyncSession = Depends(get_session)):
 
 
 
-@router.post("/search")
+@router.post("/search", response_model=OffersSearchResponse)
 async def search_offers(
     search: OfferSearchRequest,
     session: AsyncSession = Depends(get_session)
