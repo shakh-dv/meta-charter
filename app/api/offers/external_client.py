@@ -1,5 +1,3 @@
-# app/api/offers/external_client.py
-
 import httpx
 from fastapi import HTTPException
 from app.core.config import settings
