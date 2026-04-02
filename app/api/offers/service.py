@@ -12,6 +12,7 @@ from app.api.blacklist.repository import BlackListRepository
 from app.api.offers.external_client import GlobalTravelClient
 from app.api.offers.repository import OfferRepository
 from app.api.offers.schemas import OfferIn, OfferSearchRequest, OffersDataIn
+from app.core.config import settings
 from app.db.session import AsyncSessionLocal
 from app.models.black_list import BlackListTripType
 
@@ -21,7 +22,6 @@ from app.core.logger import logger
 # that change between requests but don't affect the semantic identity of the offer.
 _DYNAMIC_KEYS: frozenset[str] = frozenset({"offer_id"})
 
-_SEARCH_POLL_DELAY = 4  # seconds — external API needs time to assemble results
 
 
 class OfferSearchUser(Protocol):
@@ -122,7 +122,7 @@ class OfferService:
             result = await travel.create_search(search.model_dump(mode="json", by_alias=True))
             request_id = result["data"]["request_id"]
 
-            await asyncio.sleep(_SEARCH_POLL_DELAY)
+            await asyncio.sleep(settings.SEARCH_POLL_DELAY)
 
             return await travel.fetch_offers(request_id)
         
