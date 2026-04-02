@@ -7,10 +7,12 @@ from fastapi import HTTPException
 import httpx
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api.blacklist.repository import BlackListRepository
 from app.api.offers.external_client import GlobalTravelClient
 from app.api.offers.repository import OfferRepository
 from app.api.offers.schemas import OfferIn, OfferSearchRequest, OffersDataIn
 from app.db.session import AsyncSessionLocal
+from app.models.black_list import BlackListTripType
 
 from app.core.logger import logger
 
@@ -30,6 +32,41 @@ class OfferService:
         return hashlib.md5(serialized.encode()).hexdigest()
 
     @staticmethod
+    async def _ensure_not_blacklisted(
+        session: AsyncSession,
+        user_id: UUID,
+        search: OfferSearchRequest,
+    ) -> None:
+        if not search.directions:
+            return
+
+        if len(search.directions) == 1:
+            trip_type = BlackListTripType.OW
+            outbound = search.directions[0]
+            return_date = None
+        elif len(search.directions) == 2:
+            trip_type = BlackListTripType.RT
+            outbound = search.directions[0]
+            return_date = search.directions[1].departure_date
+        else:
+            raise HTTPException(status_code=422, detail="Поддерживаются только OW и RT")
+
+        blocking_rule = await BlackListRepository.find_blocking_rule(
+            session=session,
+            user_id=user_id,
+            origin=outbound.departure.strip().upper(),
+            destination=outbound.arrival.strip().upper(),
+            trip_type=trip_type,
+            departure_date=outbound.departure_date,
+            return_date=return_date,
+        )
+        if blocking_rule is not None:
+            raise HTTPException(
+                status_code=403,
+                detail="По этому направлению поиск запрещен blacklist-правилом",
+            )
+
+    @staticmethod
     async def search_offers(session: AsyncSession, user_id: UUID, search: OfferSearchRequest) -> list:
         def _item(offer: dict, search_hash: str) -> dict:
             return {
@@ -37,6 +74,8 @@ class OfferService:
                 "search_hash": search_hash,
                 **{k: v for k, v in offer.items() if k != "offer_id"},
             }
+
+        await OfferService._ensure_not_blacklisted(session, user_id, search)
 
         db_offers = await OfferRepository.search_offers(session, user_id, search)
         if db_offers:

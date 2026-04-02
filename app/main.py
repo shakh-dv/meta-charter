@@ -10,6 +10,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.logger import logger
+from app.api.blacklist.router import router as blacklist_router
 from app.db.session import engine
 from app.api.offers.router import router as offers_router
 from app.api.auth.router import router as auth_router
@@ -39,6 +40,7 @@ app = FastAPI(lifespan=lifespan)
 # Подключаем роутеры и мидлвари
 app.include_router(offers_router)
 app.include_router(auth_router)
+app.include_router(blacklist_router)
 
 origins = ["https://example.com"]
 
