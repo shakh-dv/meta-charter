@@ -16,6 +16,8 @@ dependencies = [
     "apscheduler>=3.11.2",
     "colorlog>=6.10.1",
     "httpx>=0.28.1",
+    "greenlet>=3.3.2",
+    "psycopg2-binary>=2.9.11",
 ]
 
 [project.scripts]
