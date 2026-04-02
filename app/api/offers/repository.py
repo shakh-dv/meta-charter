@@ -1,8 +1,10 @@
-from datetime import date, datetime, timedelta, timezone
+from datetime import datetime, timezone
+from uuid import UUID
 
-from sqlalchemy import delete, func, select, and_, or_
+from sqlalchemy import delete, func, select, and_
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.models.offers import Offer
 
 
@@ -16,7 +18,7 @@ class OfferRepository:
         stmt = insert(Offer).values(value)
 
         stmt = stmt.on_conflict_do_update(
-            index_elements=["provider_id", "supplier_offer_id"],
+            index_elements=["user_id", "search_hash"],
             set_={
                 "price": stmt.excluded.price,
                 "currency": stmt.excluded.currency,
@@ -44,8 +46,8 @@ class OfferRepository:
     
     
     @staticmethod
-    async def search_offers(session: AsyncSession, search):
-        filters = [Offer.is_active == True]
+    async def search_offers(session: AsyncSession, user_id: UUID, search):
+        filters = [Offer.is_active.is_(True), Offer.user_id == user_id]
 
         # --- ЛОГИКА НАПРАВЛЕНИЙ (Directions) ---
         if len(search.directions) == 1:

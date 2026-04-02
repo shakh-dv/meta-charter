@@ -42,6 +42,7 @@ alembic revision --autogenerate -m "message"
 
 ```bash
 alembic upgrade head
+uv run alembic upgrade head
 ```
 
 ### Rollback

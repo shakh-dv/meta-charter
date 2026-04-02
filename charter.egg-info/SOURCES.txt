@@ -7,6 +7,7 @@ app/api/auth/repository.py
 app/api/auth/router.py
 app/api/auth/schemas.py
 app/api/auth/service.py
+app/api/offers/external_client.py
 app/api/offers/repository.py
 app/api/offers/router.py
 app/api/offers/schemas.py

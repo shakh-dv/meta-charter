@@ -11,13 +11,16 @@ from app.api.deps import get_current_user
 router = APIRouter(
     prefix="/offers", 
     tags=["offers"], 
-    # dependencies=[Depends(get_current_user)] # auth middleware
 )
 
 
 @router.post("/import")
-async def import_offers(payload: OffersDataIn, session: AsyncSession = Depends(get_session)):
-    await OfferService.save_offers(session, payload)
+async def import_offers(
+    payload: OffersDataIn,
+    session: AsyncSession = Depends(get_session),
+    current_user=Depends(get_current_user),
+):
+    await OfferService.save_offers(session, current_user.id, payload)
     return {"status": "ok"}
 
 
@@ -32,8 +35,9 @@ async def export_offers(session: AsyncSession = Depends(get_session)):
 @router.post("/search", response_model=OffersSearchResponse)
 async def search_offers(
     search: OfferSearchRequest,
-    session: AsyncSession = Depends(get_session)
+    session: AsyncSession = Depends(get_session),
+    current_user=Depends(get_current_user),
  ):
-    offers = await OfferService.search_offers(session, search)
+    offers = await OfferService.search_offers(session, current_user.id, search)
     return {"count": len(offers), "offers": offers}
 

@@ -101,6 +101,26 @@ class OfferIn(BaseModel):
     }
 
 
+class OfferSearchItem(BaseModel):
+    offer_id: str
+    search_hash: str
+    price_info: PriceInfoIn
+    upsell: bool
+    booking: bool
+    is_baggage_info_provided_by_pax: bool
+    is_no_changing_airport: bool
+    price_details: list[PriceDetailIn]
+    fares_info: list[FareInfoIn]
+    baggages_info: list[dict]
+    routes: list[RouteIn]
+    provider: ProviderIn
+    supplier_provider: dict
+
+    model_config = {
+        "extra": "allow"
+    }
+
+
 class OffersDataIn(BaseModel):
     offers: list[OfferIn]
 
@@ -108,7 +128,7 @@ class OffersDataIn(BaseModel):
 # --- Response schema for /offers/search ---
 class OffersSearchResponse(BaseModel):
     count: int
-    offers: list[OfferIn]
+    offers: list[OfferSearchItem]
 
 
 

@@ -47,7 +47,7 @@ class GlobalTravelClient:
         )
 
         if resp.status_code != 200:
-            logger.error("External auth failed", status=resp.status_code, body=resp.text)
+            logger.error("External auth failed: status=%s body=%s", resp.status_code, resp.text)
             raise HTTPException(status_code=502, detail="External auth failed")
 
         self._auth_data = resp.json()["data"]
@@ -71,7 +71,7 @@ class GlobalTravelClient:
         )
 
         if resp.status_code >= 500:
-            logger.error("External API 5xx", status=resp.status_code, body=resp.text)
+            logger.error("External API 5xx: status=%s body=%s", resp.status_code, resp.text)
 
         resp.raise_for_status()
         result = resp.json()

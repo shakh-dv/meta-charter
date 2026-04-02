@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import TIMESTAMP, Boolean, Column, Date, Index, Numeric, String
+from sqlalchemy import TIMESTAMP, Boolean, Column, Date, ForeignKey, Index, Numeric, String
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.sql import func
 
@@ -11,6 +11,9 @@ class Offer(Base):
     __tablename__ = 'offers'
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, index=True)
+
+    search_hash = Column(String, nullable=False)
 
     provider_id = Column(String, nullable=False)
     supplier_offer_id = Column(String, nullable=False)
@@ -41,7 +44,7 @@ class Offer(Base):
 
 
     __table_args__ = (
-        Index("ux_offer", "provider_id", "supplier_offer_id", unique=True),
+        Index("ux_offer_user_hash", "user_id", "search_hash", unique=True),
         Index("idx_search", "origin", "destination", "departure_date", "price"),
         Index(
             "idx_active_true",
