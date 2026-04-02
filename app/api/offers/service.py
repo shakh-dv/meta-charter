@@ -1,6 +1,7 @@
 import asyncio
 import hashlib
 import json
+from typing import Protocol
 from uuid import UUID
 
 from fastapi import HTTPException
@@ -21,6 +22,12 @@ from app.core.logger import logger
 _DYNAMIC_KEYS: frozenset[str] = frozenset({"offer_id"})
 
 _SEARCH_POLL_DELAY = 4  # seconds — external API needs time to assemble results
+
+
+class OfferSearchUser(Protocol):
+    id: UUID
+    gts_email: str | None
+    gts_password: str | None
 
 
 class OfferService:
@@ -67,21 +74,22 @@ class OfferService:
             )
 
     @staticmethod
-    async def search_offers(session: AsyncSession, user_id: UUID, search: OfferSearchRequest) -> list:
+    async def search_offers(session: AsyncSession, user: OfferSearchUser, search: OfferSearchRequest) -> list:
         def _item(offer: dict, search_hash: str) -> dict:
-            return {
-                "offer_id": offer["offer_id"],
-                "search_hash": search_hash,
-                **{k: v for k, v in offer.items() if k != "offer_id"},
-            }
+            result = dict(offer)
+            result["search_hash"] = search_hash
+            result["offer_id"] = offer["offer_id"]
+            return result
+
+        user_id = user.id
 
         await OfferService._ensure_not_blacklisted(session, user_id, search)
 
         db_offers = await OfferRepository.search_offers(session, user_id, search)
         if db_offers:
-            return [_item(o.raw_json, o.search_hash) for o in db_offers]
+            return [_item(o["raw_json"], o["search_hash"]) for o in db_offers]
 
-        external_offers = await OfferService._search_external(search)
+        external_offers = await OfferService._search_external(search, user)
 
         # Cache external results locally for subsequent identical searches.
         if external_offers:
@@ -97,9 +105,18 @@ class OfferService:
         return [_item(offer, OfferService._compute_search_hash(offer)) for offer in external_offers]
 
     @staticmethod
-    async def _search_external(search: OfferSearchRequest) -> list:
+    async def _search_external(search: OfferSearchRequest, user: OfferSearchUser) -> list:
+        gts_email = user.gts_email
+        gts_password = user.gts_password
+
+        if not gts_email or not gts_password:
+            raise HTTPException(
+                status_code=400,
+                detail="Для пользователя не настроены GTS credentials",
+            )
+
         async with httpx.AsyncClient(timeout=30.0) as client:
-            travel = GlobalTravelClient(client)
+            travel = GlobalTravelClient(client, email=str(gts_email), password=str(gts_password))
             await travel.authenticate()
 
             result = await travel.create_search(search.model_dump(mode="json", by_alias=True))

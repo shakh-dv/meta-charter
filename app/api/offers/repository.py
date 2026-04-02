@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from typing import Any
 from uuid import UUID
 
 from sqlalchemy import delete, func, select, and_
@@ -46,7 +47,7 @@ class OfferRepository:
     
     
     @staticmethod
-    async def search_offers(session: AsyncSession, user_id: UUID, search):
+    async def search_offers(session: AsyncSession, user_id: UUID, search) -> list[dict[str, Any]]:
         filters = [Offer.is_active.is_(True), Offer.user_id == user_id]
 
         # --- ЛОГИКА НАПРАВЛЕНИЙ (Directions) ---
@@ -89,9 +90,12 @@ class OfferRepository:
         if getattr(search, 'provider', None):
             filters.append(Offer.provider_id == search.provider)
 
-        stmt = select(Offer).where(and_(*filters))
+        stmt = select(Offer.raw_json, Offer.search_hash).where(and_(*filters))
         result = await session.execute(stmt)
-        return result.scalars().all()
+        return [
+            {"raw_json": row.raw_json, "search_hash": row.search_hash}
+            for row in result.all()
+        ]
     
 
     @staticmethod

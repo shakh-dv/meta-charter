@@ -9,8 +9,8 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = 'HS256'
     JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     JWT_REFRESH_TOKEN_EXPIRE_DAYS: int = 7
-    EXTERNAL_API_EMAIL: str
-    EXTERNAL_API_PASSWORD: str
+    EXTERNAL_API_EMAIL: str | None = None
+    EXTERNAL_API_PASSWORD: str | None = None
 
     model_config = SettingsConfigDict(
         env_file='.env',

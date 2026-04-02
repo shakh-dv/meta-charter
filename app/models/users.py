@@ -20,6 +20,8 @@ class User(Base):
 
     email = Column(String, nullable=False, unique=True, index=True)
     password = Column(String, nullable=False)
+    gts_email = Column(String, nullable=True)
+    gts_password = Column(String, nullable=True)
     role = Column(Enum(UserRole), nullable=False, default=UserRole.agent)
     created_at = Column(TIMESTAMP, server_default=func.now())
 

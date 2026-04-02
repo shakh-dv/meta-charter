@@ -1,6 +1,5 @@
 import httpx
 from fastapi import HTTPException
-from app.core.config import settings
 from app.core.logger import logger
 
 
@@ -15,8 +14,10 @@ class GlobalTravelClient:
        
     }
 
-    def __init__(self, client: httpx.AsyncClient) -> None:
+    def __init__(self, client: httpx.AsyncClient, email: str, password: str) -> None:
         self._client = client
+        self._email = email
+        self._password = password
         self._auth_data: dict | None = None
 
    
@@ -40,8 +41,8 @@ class GlobalTravelClient:
         resp = await self._client.post(
             f"{self.BASE_URL}/auth/signin/",
             json={
-                "email": settings.EXTERNAL_API_EMAIL,
-                "password": settings.EXTERNAL_API_PASSWORD,
+                "email": self._email,
+                "password": self._password,
             },
             headers=self._BASE_HEADERS,
         )
@@ -62,7 +63,7 @@ class GlobalTravelClient:
         resp.raise_for_status()
         return resp.json()
 
-    async def fetch_offers(self, request_id: str, *, limit: int = 100) -> dict:
+    async def fetch_offers(self, request_id: str, *, limit: int = 100) -> list[dict]:
         """POST /content/offers/ — polls results for a started search."""
         resp = await self._client.post(
             f"{self.BASE_URL}/content/offers/",

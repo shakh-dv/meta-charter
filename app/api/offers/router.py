@@ -10,7 +10,8 @@ from app.api.deps import get_current_user
 
 router = APIRouter(
     prefix="/offers", 
-    tags=["offers"], 
+    tags=["offers"],
+    dependencies=[Depends(get_current_user)], 
 )
 
 
@@ -38,6 +39,6 @@ async def search_offers(
     session: AsyncSession = Depends(get_session),
     current_user=Depends(get_current_user),
  ):
-    offers = await OfferService.search_offers(session, current_user.id, search)
+    offers = await OfferService.search_offers(session, current_user, search)
     return {"count": len(offers), "offers": offers}
 
