@@ -3,12 +3,17 @@
 from typing import Optional, List
 from datetime import date
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 class DirectionSearchIn(BaseModel):
     departure: str
     arrival: str
     departure_date: date
+
+    @field_validator('departure', 'arrival')
+    @classmethod
+    def clean_text(cls, v: str) -> str:
+        return v.strip().upper()
 
 class OfferSearchRequest(BaseModel):
     directions: List[DirectionSearchIn]
@@ -18,7 +23,7 @@ class OfferSearchRequest(BaseModel):
     ins: int = 0
     
     booking_class: Optional[str] = Field(None, alias="class")
-    direct: Optional[bool] = False
+    direct: Optional[bool] = None
     flexible: Optional[bool] = True
     airlines: Optional[List[str]] = []
     passengers_ids: Optional[list[str]] = []
@@ -55,9 +60,29 @@ class ProviderIn(BaseModel):
 
 
 class SegmentIn(BaseModel):
-    departure_city_code: str
-    arrival_city_code: str
+    departure_city_code: Optional[str] = None
+    arrival_city_code: Optional[str] = None
     departure_date: date
+
+    departure_airport_code: str
+    arrival_airport_code: str
+
+    
+    @field_validator("departure_city_code", "arrival_city_code")
+    @classmethod
+    def normalize_optional_code(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        value = value.strip().upper()
+        return value or None
+    
+    @field_validator("departure_airport_code", "arrival_airport_code")
+    @classmethod
+    def normalize_required_code(cls, value: str) -> str:
+        value = value.strip().upper()
+        if not value:
+            raise ValueError("airport code cannot be empty")
+        return value
 
     model_config = {
         "extra": "allow"

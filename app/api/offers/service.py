@@ -99,6 +99,8 @@ class OfferService:
                     user_id,
                     OffersDataIn(offers=[OfferIn.model_validate(offer) for offer in external_offers]),
                 )
+                pretty = json.dumps(external_offers, indent=2, ensure_ascii=False)
+                logger.info("\n" + pretty)
             except Exception as exc:
                 logger.warning("Failed to persist external offers in cache: %s", exc)
 
@@ -119,7 +121,7 @@ class OfferService:
             travel = GlobalTravelClient(client, email=str(gts_email), password=str(gts_password))
             await travel.authenticate()
 
-            result = await travel.create_search(search.model_dump(mode="json", by_alias=True))
+            result = await travel.create_search(search.model_dump(mode="json", by_alias=True, exclude_none=True))
             request_id = result["data"]["request_id"]
 
             await asyncio.sleep(settings.SEARCH_POLL_DELAY)
@@ -151,6 +153,7 @@ class OfferService:
             if offer.fares_info
             else 0
         )
+      
 
         raw = offer.model_dump(mode="json")
         search_hash = OfferService._compute_search_hash(raw)
@@ -160,8 +163,8 @@ class OfferService:
             "search_hash":       search_hash,
             "provider_id":       offer.provider.provider_id,
             "supplier_offer_id": offer.offer_id,
-            "origin":            first_segment.departure_city_code,
-            "destination":       last_segment.arrival_city_code,
+            "origin":            first_segment.departure_city_code or first_segment.departure_airport_code,
+            "destination":       last_segment.arrival_city_code or last_segment.arrival_airport_code,
             "departure_date":    first_segment.departure_date,
             "return_date":       return_date,
             "price":             offer.price_info.price,
