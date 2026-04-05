@@ -21,7 +21,8 @@ async def import_offers(
     session: AsyncSession = Depends(get_session),
     current_user=Depends(get_current_user),
 ):
-    await OfferService.save_offers(session, current_user.id, payload)
+    service = OfferService(session, current_user)
+    await service.save_offers(payload)
     return {"status": "ok"}
 
 
@@ -39,6 +40,7 @@ async def search_offers(
     session: AsyncSession = Depends(get_session),
     current_user=Depends(get_current_user),
  ):
-    offers = await OfferService.search_offers(session, current_user, search)
+    service = OfferService(session, current_user)
+    offers = await service.search_offers(search)
     return {"count": len(offers), "offers": offers}
 
