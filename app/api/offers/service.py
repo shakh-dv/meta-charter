@@ -42,41 +42,64 @@ class OfferService:
         self.user = user
         self.user_id = user.id
 
-    @staticmethod
-    def _compute_search_hash(data: dict) -> str:
-        canonical = {k: v for k, v in data.items() if k not in _DYNAMIC_KEYS}
-        return hashlib.md5(json.dumps(canonical, sort_keys=True, default=str).encode()).hexdigest()
-    
-    @staticmethod
-    def _prepare_offer(raw: dict) -> PreparedOffer:
-        """Validate, normalize and hash a raw offer. Single source of truth for search_hash."""
-        model = OfferIn.model_validate(raw)
-        data = model.model_dump(mode="json")
-        return PreparedOffer(validated=model, normalized=data, search_hash=OfferService._compute_search_hash(data))
 
-    async def _upsert_prepared(self, offers: list[PreparedOffer]) -> None:
-        """Map prepared offers to DB rows and upsert."""
-        rows = []
-        for offer in offers:
+    async def search_offers(self, search: OfferSearchRequest) -> list:
+        await self._ensure_not_blacklisted(search)
+
+        db_offers = await OfferRepository.search_offers(self.session, self.user_id, search)
+        if db_offers:
+            return [{**o["raw_json"], "search_hash": o["search_hash"]} for o in db_offers]
+
+        raw_offers = await self._fetch_from_gts(search)
+        offers = [self._prepare_offer(o) for o in raw_offers]
+
+        # Cache results locally for subsequent identical searches.
+        if offers:
             try:
-                rows.append(self._build_db_row(offer))
+                await self._upsert_prepared(offers)
+                logger.info("Cached %d offers for user %s", len(offers), self.user_id)
             except Exception as exc:
-                logger.warning("Skipping invalid offer offer_id=%s error=%s", getattr(offer.validated, "offer_id", None), exc)
-        if rows:
-            await OfferRepository.batch_upsert(self.session, rows)
-            await self.session.commit()
+                logger.warning("Failed to persist external offers in cache: %s", exc)
+
+        return [{**o.normalized, "search_hash": o.search_hash} for o in offers]
+    
+    async def save_offers(self, payload: OffersDataIn) -> None:
+        """Public endpoint for /import. Normalizes each offer and upserts."""
+        offers = [
+            self._prepare_offer(offer.model_dump(mode="json"))
+            for offer in payload.offers
+        ]
+        await self._upsert_prepared(offers)
+
+    @staticmethod
+    async def get_offers(session: AsyncSession):
+        return await OfferRepository.get_offers(session)
+
+    @staticmethod
+    async def run_cleanup() -> None:
+        """Called by APScheduler — creates its own session since there's no request context."""
+        logger.info("Starting expired offer cleanup...")
+        async with AsyncSessionLocal() as session:
+            try:
+                deleted = await OfferRepository.clear_expired_offers(session)
+                await session.commit()
+                logger.info("Cleanup complete: deleted=%s", deleted)
+            except Exception as exc:
+                await session.rollback()
+                logger.error("Cleanup failed: %s", exc)
+
+    # ── PRIVATE ────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
     async def _ensure_not_blacklisted(self, search: OfferSearchRequest) -> None:
         if not search.directions:
             return
-
+        
+        outbound = search.directions[0]
         if len(search.directions) == 1:
             trip_type = BlackListTripType.OW
-            outbound = search.directions[0]
             return_date = None
         elif len(search.directions) == 2:
             trip_type = BlackListTripType.RT
-            outbound = search.directions[0]
             return_date = search.directions[1].departure_date
         else:
             raise HTTPException(status_code=422, detail="Поддерживаются только OW и RT")
@@ -96,27 +119,8 @@ class OfferService:
                 detail="По этому направлению поиск запрещен blacklist-правилом",
             )
 
-    async def search_offers(self, search: OfferSearchRequest) -> list:
-        await self._ensure_not_blacklisted(search)
 
-        db_offers = await OfferRepository.search_offers(self.session, self.user_id, search)
-        if db_offers:
-            return [{**o["raw_json"], "search_hash": o["search_hash"]} for o in db_offers]
-
-        raw_offers = await self._search_external(search)
-        offers = [OfferService._prepare_offer(o) for o in raw_offers]
-
-        # Cache results locally for subsequent identical searches.
-        if offers:
-            try:
-                await self._upsert_prepared(offers)
-                logger.info("Cached %d offers for user %s", len(offers), self.user_id)
-            except Exception as exc:
-                logger.warning("Failed to persist external offers in cache: %s", exc)
-
-        return [{**o.normalized, "search_hash": o.search_hash} for o in offers]
-
-    async def _search_external(self, search: OfferSearchRequest) -> list:
+    async def _fetch_from_gts(self, search: OfferSearchRequest) -> list:
         if not self.user.gts_email or not self.user.gts_password:
             raise HTTPException(
                 status_code=400,
@@ -143,6 +147,7 @@ class OfferService:
 
             return await travel.fetch_offers(request_id)
         
+
     def _build_db_row(self, prepared: PreparedOffer) -> dict:
         offer = prepared.validated
 
@@ -191,32 +196,28 @@ class OfferService:
             "is_active":         True,
             "raw_json":          prepared.normalized,
         }
-
-
-    async def save_offers(self, payload: OffersDataIn) -> None:
-        """Public endpoint for /import. Normalizes each offer and upserts."""
-        offers = [
-            OfferService._prepare_offer(offer.model_dump(mode="json"))
-            for offer in payload.offers
-        ]
-        await self._upsert_prepared(offers)
-
-
-
-
-    @staticmethod
-    async def get_offers(session: AsyncSession):
-        return await OfferRepository.get_offers(session)
-
-    @staticmethod
-    async def run_cleanup() -> None:
-        """Called by APScheduler — creates its own session since there's no request context."""
-        logger.info("Starting expired offer cleanup...")
-        async with AsyncSessionLocal() as session:
+    
+    async def _upsert_prepared(self, offers: list[PreparedOffer]) -> None:
+        """Map prepared offers to DB rows and upsert."""
+        rows = []
+        for offer in offers:
             try:
-                deleted = await OfferRepository.clear_expired_offers(session)
-                await session.commit()
-                logger.info("Cleanup complete: deleted=%s", deleted)
+                rows.append(self._build_db_row(offer))
             except Exception as exc:
-                await session.rollback()
-                logger.error("Cleanup failed: %s", exc)
+                logger.warning("Skipping invalid offer offer_id=%s error=%s", getattr(offer.validated, "offer_id", None), exc)
+        if rows:
+            await OfferRepository.batch_upsert(self.session, rows)
+            await self.session.commit()
+
+    @staticmethod
+    def _prepare_offer(raw: dict) -> PreparedOffer:
+        """Validate, normalize and hash a raw offer. Single source of truth for search_hash."""
+        model = OfferIn.model_validate(raw)
+        data = model.model_dump(mode="json")
+        return PreparedOffer(validated=model, normalized=data, search_hash=OfferService._compute_search_hash(data))
+
+
+    @staticmethod
+    def _compute_search_hash(data: dict) -> str:
+        canonical = {k: v for k, v in data.items() if k not in _DYNAMIC_KEYS}
+        return hashlib.md5(json.dumps(canonical, sort_keys=True, default=str).encode()).hexdigest()
