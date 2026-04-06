@@ -1,0 +1,378 @@
+{
+  "info": {
+    "_postman_id": "dac455d6-5290-4fc5-8a40-80ccc824aac9",
+    "name": "Meta Charter",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "26051827"
+  },
+  "item": [
+    {
+      "name": "auth/register",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const response = pm.response.json();\r",
+              "\r",
+              "pm.collectionVariables.set(\"access_token\", response.access_token);\r",
+              "pm.collectionVariables.set(\"refresh_token\", response.refresh_token);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"email\": \"qwerty@gmail.com\",\r\n    \"password\": \"Qwerty123_o\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/auth/register",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "register"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "auth/login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const response = pm.response.json();\r",
+              "\r",
+              "\r",
+              "pm.collectionVariables.set(\"access_token\", response.access_token);\r",
+              "pm.collectionVariables.set(\"refresh_token\", response.refresh_token);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"email\": \"qwerty@gmail.com\",\r\n    \"password\": \"Qwerty123_o\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/auth/login",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "offer/import",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \r\n    \"offers\": [\r\n        {\r\n            \"offer_id\": \"79fd8cd4-b0f7-4be8-aa91-8f6024af7668\",\r\n            \"price_info\": {\r\n                \"price\": 46142.0,\r\n                \"currency\": \"INR\",\r\n                \"fee_amount\": 0.0,\r\n                \"base_amount\": 24715.0,\r\n                \"commission_amount\": 0.0,\r\n                \"from_commission_amount\": 0.0,\r\n                \"to_commission_amount\": 0.0\r\n            },\r\n            \"upsell\": false,\r\n            \"booking\": true,\r\n            \"is_baggage_info_provided_by_pax\": false,\r\n            \"is_no_changing_airport\": false,\r\n            \"price_details\": [\r\n                {\r\n                    \"passenger_type\": \"ADT\",\r\n                    \"currency\": \"INR\",\r\n                    \"quantity\": 1,\r\n                    \"single_base_amount\": 24715.0,\r\n                    \"single_tax_amount\": 21427.0,\r\n                    \"single_tax_details\": [],\r\n                    \"fee_amount\": 0.0,\r\n                    \"to_commission_amount\": 0,\r\n                    \"commission_amount\": 0.0,\r\n                    \"single_total_amount\": 46142.0,\r\n                    \"base_total_amount\": 24715.0,\r\n                    \"tax_total_amount\": 21427.0,\r\n                    \"total_amount\": 46142.0,\r\n                    \"payable_amount\": 46142.0\r\n                }\r\n            ],\r\n            \"baggages_info\": [\r\n                {\r\n                    \"segment_keys\": [\r\n                        \"7a3c8ef7c7993dbaef19a72338abece7194b3e2f5b677c3f4470529e1dbe02f2\",\r\n                        \"e9510a6aef1fff11d327709573ba35eae45e059cc4bea2d1d4a7aeed810e1ebf\"\r\n                    ],\r\n                    \"leg\": [\r\n                        \"TAS-DXB\",\r\n                        \"DXB-VKO\"\r\n                    ],\r\n                    \"passenger_type\": \"ADT\",\r\n                    \"baggage\": {\r\n                        \"value\": 25,\r\n                        \"unit\": \"kg\",\r\n                        \"size\": {\r\n                            \"height\": null,\r\n                            \"width\": null,\r\n                            \"length\": null,\r\n                            \"unit\": \"\"\r\n                        }\r\n                    },\r\n                    \"hand_baggage\": {\r\n                        \"value\": 1,\r\n                        \"unit\": \"pc\",\r\n                        \"weight\": 0,\r\n                        \"size\": {\r\n                            \"height\": null,\r\n                            \"width\": null,\r\n                            \"length\": null,\r\n                            \"unit\": \"\"\r\n                        }\r\n                    },\r\n                    \"description\": \"\"\r\n                }\r\n            ],\r\n            \"fares_info\": [\r\n                {\r\n                    \"segment_keys\": [\r\n                        \"7a3c8ef7c7993dbaef19a72338abece7194b3e2f5b677c3f4470529e1dbe02f2\",\r\n                        \"e9510a6aef1fff11d327709573ba35eae45e059cc4bea2d1d4a7aeed810e1ebf\"\r\n                    ],\r\n                    \"leg\": [\r\n                        \"TAS-DXB\",\r\n                        \"DXB-VKO\"\r\n                    ],\r\n                    \"passenger_type\": \"ADT\",\r\n                    \"seats\": 2,\r\n                    \"upsell\": {\r\n                        \"name\": \"PUBL\",\r\n                        \"services\": []\r\n                    },\r\n                    \"fare_code\": \"LLAOPIN1\",\r\n                    \"service_class\": \"Economy\",\r\n                    \"service_class_code\": \"Y\",\r\n                    \"booking_class\": \"E\",\r\n                    \"description\": \"\"\r\n                }\r\n            ],\r\n            \"routes\": [\r\n                {\r\n                    \"route_index\": 1,\r\n                    \"direction\": \"TAS-VKO\",\r\n                    \"stops\": 1,\r\n                    \"trip_time_minutes\": 285,\r\n                    \"flight_time_minutes\": 450,\r\n                    \"segments\": [\r\n                        {\r\n                            \"segment_index\": 1,\r\n                            \"segment_key\": \"7a3c8ef7c7993dbaef19a72338abece7194b3e2f5b677c3f4470529e1dbe02f2\",\r\n                            \"leg\": \"TAS-DXB\",\r\n                            \"flight_number\": \"2087\",\r\n                            \"departure_country\": \"Uzbekistan\",\r\n                            \"departure_country_code\": \"UZ\",\r\n                            \"departure_city\": \"Tashkent\",\r\n                            \"departure_city_code\": \"TAS\",\r\n                            \"departure_airport\": \"Tashkent International Airport\",\r\n                            \"departure_airport_code\": \"TAS\",\r\n                            \"departure_terminal\": \"\",\r\n                            \"departure_date\": \"2026-04-25\",\r\n                            \"departure_time\": \"04:05\",\r\n                            \"departure_timezone\": \"UTC+05:00\",\r\n                            \"arrival_country\": \"United Arab Emirates\",\r\n                            \"arrival_country_code\": \"AE\",\r\n                            \"arrival_city\": \"Dubai\",\r\n                            \"arrival_city_code\": \"DXB\",\r\n                            \"arrival_airport\": \"Dubai Intl\",\r\n                            \"arrival_airport_code\": \"DXB\",\r\n                            \"arrival_terminal\": \"3\",\r\n                            \"arrival_date\": \"2026-04-25\",\r\n                            \"arrival_time\": \"06:50\",\r\n                            \"arrival_timezone\": \"UTC+04:00\",\r\n                            \"duration_minutes\": 165,\r\n                            \"stop_time_minutes\": 235,\r\n                            \"marketing_airline\": \"Emirates\",\r\n                            \"marketing_airline_code\": \"EK\",\r\n                            \"marketing_airline_logo\": \"https://api2.globaltravel.space/media/airlines/EK.png\",\r\n                            \"operating_airline\": \"flydubai\",\r\n                            \"operating_airline_code\": \"FZ\",\r\n                            \"operating_airline_logo\": \"https://api2.globaltravel.space/media/airlines/FZ.png\",\r\n                            \"seatmap_availability\": false,\r\n                            \"services_availability\": false,\r\n                            \"airplane_info\": {\r\n                                \"airplane\": \"\",\r\n                                \"airplane_code\": \"\",\r\n                                \"seat_width\": \"\",\r\n                                \"seat_angle\": \"\",\r\n                                \"seat_scheme\": \"\",\r\n                                \"seat_distance\": \"\",\r\n                                \"has_wifi\": false\r\n                            }\r\n                        },\r\n                        {\r\n                            \"segment_index\": 2,\r\n                            \"segment_key\": \"e9510a6aef1fff11d327709573ba35eae45e059cc4bea2d1d4a7aeed810e1ebf\",\r\n                            \"leg\": \"DXB-VKO\",\r\n                            \"flight_number\": \"2310\",\r\n                            \"departure_country\": \"United Arab Emirates\",\r\n                            \"departure_country_code\": \"AE\",\r\n                            \"departure_city\": \"Dubai\",\r\n                            \"departure_city_code\": \"DXB\",\r\n                            \"departure_airport\": \"Dubai Intl\",\r\n                            \"departure_airport_code\": \"DXB\",\r\n                            \"departure_terminal\": \"2\",\r\n                            \"departure_date\": \"2026-04-25\",\r\n                            \"departure_time\": \"10:45\",\r\n                            \"departure_timezone\": \"UTC+04:00\",\r\n                            \"arrival_country\": \"Russia\",\r\n                            \"arrival_country_code\": \"RU\",\r\n                            \"arrival_city\": \"Moscow\",\r\n                            \"arrival_city_code\": \"MOW\",\r\n                            \"arrival_airport\": \"Vnukovo Intl\",\r\n                            \"arrival_airport_code\": \"VKO\",\r\n                            \"arrival_terminal\": \"\",\r\n                            \"arrival_date\": \"2026-04-25\",\r\n                            \"arrival_time\": \"15:30\",\r\n                            \"arrival_timezone\": \"UTC+03:00\",\r\n                            \"duration_minutes\": 285,\r\n                            \"stop_time_minutes\": 0,\r\n                            \"marketing_airline\": \"Emirates\",\r\n                            \"marketing_airline_code\": \"EK\",\r\n                            \"marketing_airline_logo\": \"https://api2.globaltravel.space/media/airlines/EK.png\",\r\n                            \"operating_airline\": \"flydubai\",\r\n                            \"operating_airline_code\": \"FZ\",\r\n                            \"operating_airline_logo\": \"https://api2.globaltravel.space/media/airlines/FZ.png\",\r\n                            \"seatmap_availability\": false,\r\n                            \"services_availability\": false,\r\n                            \"airplane_info\": {\r\n                                \"airplane\": \"\",\r\n                                \"airplane_code\": \"\",\r\n                                \"seat_width\": \"\",\r\n                                \"seat_angle\": \"\",\r\n                                \"seat_scheme\": \"\",\r\n                                \"seat_distance\": \"\",\r\n                                \"has_wifi\": false\r\n                            }\r\n                        }\r\n                    ]\r\n                }\r\n            ],\r\n            \"provider\": {\r\n                \"provider_id\": \"a81c005e965a458683dd89e1402491be\",\r\n                \"name\": \"Alpha\",\r\n                \"index\": null,\r\n                \"type\": \"own\",\r\n                \"is_charter\": false\r\n            },\r\n            \"supplier_provider\": {\r\n                \"provider_name\": \"\",\r\n                \"provider_office\": \"\"\r\n            }\r\n        },\r\n        {\r\n            \"offer_id\": \"ae8bfef2-5e3d-4d96-a717-d414a20479f2\",\r\n            \"price_info\": {\r\n                \"price\": 47022.0,\r\n                \"currency\": \"INR\",\r\n                \"fee_amount\": 0.0,\r\n                \"base_amount\": 24715.0,\r\n                \"commission_amount\": 0.0,\r\n                \"from_commission_amount\": 0.0,\r\n                \"to_commission_amount\": 0.0\r\n            },\r\n            \"upsell\": false,\r\n            \"booking\": true,\r\n            \"is_baggage_info_provided_by_pax\": false,\r\n            \"is_no_changing_airport\": false,\r\n            \"price_details\": [\r\n                {\r\n                    \"passenger_type\": \"ADT\",\r\n                    \"currency\": \"INR\",\r\n                    \"quantity\": 1,\r\n                    \"single_base_amount\": 24715.0,\r\n                    \"single_tax_amount\": 22307.0,\r\n                    \"single_tax_details\": [],\r\n                    \"fee_amount\": 0.0,\r\n                    \"to_commission_amount\": 0,\r\n                    \"commission_amount\": 0.0,\r\n                    \"single_total_amount\": 47022.0,\r\n                    \"base_total_amount\": 24715.0,\r\n                    \"tax_total_amount\": 22307.0,\r\n                    \"total_amount\": 47022.0,\r\n                    \"payable_amount\": 47022.0\r\n                }\r\n            ],\r\n            \"baggages_info\": [\r\n                {\r\n                    \"segment_keys\": [\r\n                        \"beb62666e9eed26e33c2e6a5b9ed4d5a08d7bbb8d5478b1b75d91f8277b3682b\",\r\n                        \"dff5b98945c757e9f2218aca5e7eb7955c3ba1ade713e027781902bc6a0997b8\"\r\n                    ],\r\n                    \"leg\": [\r\n                        \"TAS-DXB\",\r\n                        \"DXB-DME\"\r\n                    ],\r\n                    \"passenger_type\": \"ADT\",\r\n                    \"baggage\": {\r\n                        \"value\": 25,\r\n                        \"unit\": \"kg\",\r\n                        \"size\": {\r\n                            \"height\": null,\r\n                            \"width\": null,\r\n                            \"length\": null,\r\n                            \"unit\": \"\"\r\n                        }\r\n                    },\r\n                    \"hand_baggage\": {\r\n                        \"value\": 1,\r\n                        \"unit\": \"pc\",\r\n                        \"weight\": 0,\r\n                        \"size\": {\r\n                            \"height\": null,\r\n                            \"width\": null,\r\n                            \"length\": null,\r\n                            \"unit\": \"\"\r\n                        }\r\n                    },\r\n                    \"description\": \"\"\r\n                }\r\n            ],\r\n            \"fares_info\": [\r\n                {\r\n                    \"segment_keys\": [\r\n                        \"beb62666e9eed26e33c2e6a5b9ed4d5a08d7bbb8d5478b1b75d91f8277b3682b\",\r\n                        \"dff5b98945c757e9f2218aca5e7eb7955c3ba1ade713e027781902bc6a0997b8\"\r\n                    ],\r\n                    \"leg\": [\r\n                        \"TAS-DXB\",\r\n                        \"DXB-DME\"\r\n                    ],\r\n                    \"passenger_type\": \"ADT\",\r\n                    \"seats\": 2,\r\n                    \"upsell\": {\r\n                        \"name\": \"PUBL\",\r\n                        \"services\": []\r\n                    },\r\n                    \"fare_code\": \"LLAOPIN1\",\r\n                    \"service_class\": \"Economy\",\r\n                    \"service_class_code\": \"Y\",\r\n                    \"booking_class\": \"L\",\r\n                    \"description\": \"\"\r\n                }\r\n            ],\r\n            \"routes\": [\r\n                {\r\n                    \"route_index\": 1,\r\n                    \"direction\": \"TAS-DME\",\r\n                    \"stops\": 1,\r\n                    \"trip_time_minutes\": 270,\r\n                    \"flight_time_minutes\": 435,\r\n                    \"segments\": [\r\n                        {\r\n                            \"segment_index\": 1,\r\n                            \"segment_key\": \"beb62666e9eed26e33c2e6a5b9ed4d5a08d7bbb8d5478b1b75d91f8277b3682b\",\r\n                            \"leg\": \"TAS-DXB\",\r\n                            \"flight_number\": \"2087\",\r\n                            \"departure_country\": \"Uzbekistan\",\r\n                            \"departure_country_code\": \"UZ\",\r\n                            \"departure_city\": \"Tashkent\",\r\n                            \"departure_city_code\": \"TAS\",\r\n                            \"departure_airport\": \"Tashkent International Airport\",\r\n                            \"departure_airport_code\": \"TAS\",\r\n                            \"departure_terminal\": \"\",\r\n                            \"departure_date\": \"2026-04-25\",\r\n                            \"departure_time\": \"04:05\",\r\n                            \"departure_timezone\": \"UTC+05:00\",\r\n                            \"arrival_country\": \"United Arab Emirates\",\r\n                            \"arrival_country_code\": \"AE\",\r\n                            \"arrival_city\": \"Dubai\",\r\n                            \"arrival_city_code\": \"DXB\",\r\n                            \"arrival_airport\": \"Dubai Intl\",\r\n                            \"arrival_airport_code\": \"DXB\",\r\n                            \"arrival_terminal\": \"3\",\r\n                            \"arrival_date\": \"2026-04-25\",\r\n                            \"arrival_time\": \"06:50\",\r\n                            \"arrival_timezone\": \"UTC+04:00\",\r\n                            \"duration_minutes\": 165,\r\n                            \"stop_time_minutes\": 175,\r\n                            \"marketing_airline\": \"Emirates\",\r\n                            \"marketing_airline_code\": \"EK\",\r\n                            \"marketing_airline_logo\": \"https://api2.globaltravel.space/media/airlines/EK.png\",\r\n                            \"operating_airline\": \"flydubai\",\r\n                            \"operating_airline_code\": \"FZ\",\r\n                            \"operating_airline_logo\": \"https://api2.globaltravel.space/media/airlines/FZ.png\",\r\n                            \"seatmap_availability\": false,\r\n                            \"services_availability\": false,\r\n                            \"airplane_info\": {\r\n                                \"airplane\": \"\",\r\n                                \"airplane_code\": \"\",\r\n                                \"seat_width\": \"\",\r\n                                \"seat_angle\": \"\",\r\n                                \"seat_scheme\": \"\",\r\n                                \"seat_distance\": \"\",\r\n                                \"has_wifi\": false\r\n                            }\r\n                        },\r\n                        {\r\n                            \"segment_index\": 2,\r\n                            \"segment_key\": \"dff5b98945c757e9f2218aca5e7eb7955c3ba1ade713e027781902bc6a0997b8\",\r\n                            \"leg\": \"DXB-DME\",\r\n                            \"flight_number\": \"133\",\r\n                            \"departure_country\": \"United Arab Emirates\",\r\n                            \"departure_country_code\": \"AE\",\r\n                            \"departure_city\": \"Dubai\",\r\n                            \"departure_city_code\": \"DXB\",\r\n                            \"departure_airport\": \"Dubai Intl\",\r\n                            \"departure_airport_code\": \"DXB\",\r\n                            \"departure_terminal\": \"3\",\r\n                            \"departure_date\": \"2026-04-25\",\r\n                            \"departure_time\": \"09:45\",\r\n                            \"departure_timezone\": \"UTC+04:00\",\r\n                            \"arrival_country\": \"Russia\",\r\n                            \"arrival_country_code\": \"RU\",\r\n                            \"arrival_city\": \"Moscow\",\r\n                            \"arrival_city_code\": \"MOW\",\r\n                            \"arrival_airport\": \"Domodedovo\",\r\n                            \"arrival_airport_code\": \"DME\",\r\n                            \"arrival_terminal\": \"\",\r\n                            \"arrival_date\": \"2026-04-25\",\r\n                            \"arrival_time\": \"14:15\",\r\n                            \"arrival_timezone\": \"UTC+03:00\",\r\n                            \"duration_minutes\": 270,\r\n                            \"stop_time_minutes\": 0,\r\n                            \"marketing_airline\": \"Emirates\",\r\n                            \"marketing_airline_code\": \"EK\",\r\n                            \"marketing_airline_logo\": \"https://api2.globaltravel.space/media/airlines/EK.png\",\r\n                            \"operating_airline\": \"Emirates\",\r\n                            \"operating_airline_code\": \"EK\",\r\n                            \"operating_airline_logo\": \"https://api2.globaltravel.space/media/airlines/EK.png\",\r\n                            \"seatmap_availability\": false,\r\n                            \"services_availability\": false,\r\n                            \"airplane_info\": {\r\n                                \"airplane\": \"\",\r\n                                \"airplane_code\": \"\",\r\n                                \"seat_width\": \"\",\r\n                                \"seat_angle\": \"\",\r\n                                \"seat_scheme\": \"\",\r\n                                \"seat_distance\": \"\",\r\n                                \"has_wifi\": false\r\n                            }\r\n                        }\r\n                    ]\r\n                }\r\n            ],\r\n            \"provider\": {\r\n                \"provider_id\": \"a81c005e965a458683dd89e1402491be\",\r\n                \"name\": \"Alpha\",\r\n                \"index\": null,\r\n                \"type\": \"own\",\r\n                \"is_charter\": false\r\n            },\r\n            \"supplier_provider\": {\r\n                \"provider_name\": \"\",\r\n                \"provider_office\": \"\"\r\n            }\r\n        },\r\n        {\r\n            \"offer_id\": \"ea12d0c4-3e06-43bc-b7ff-b813b60f6210\",\r\n            \"price_info\": {\r\n                \"price\": 191367.0,\r\n                \"currency\": \"INR\",\r\n                \"fee_amount\": 0.0,\r\n                \"base_amount\": 169940.0,\r\n                \"commission_amount\": 0.0,\r\n                \"from_commission_amount\": 0.0,\r\n                \"to_commission_amount\": 0.0\r\n            },\r\n            \"upsell\": false,\r\n            \"booking\": true,\r\n            \"is_baggage_info_provided_by_pax\": false,\r\n            \"is_no_changing_airport\": false,\r\n            \"price_details\": [\r\n                {\r\n                    \"passenger_type\": \"ADT\",\r\n                    \"currency\": \"INR\",\r\n                    \"quantity\": 1,\r\n                    \"single_base_amount\": 169940.0,\r\n                    \"single_tax_amount\": 21427.0,\r\n                    \"single_tax_details\": [],\r\n                    \"fee_amount\": 0.0,\r\n                    \"to_commission_amount\": 0,\r\n                    \"commission_amount\": 0.0,\r\n                    \"single_total_amount\": 191367.0,\r\n                    \"base_total_amount\": 169940.0,\r\n                    \"tax_total_amount\": 21427.0,\r\n                    \"total_amount\": 191367.0,\r\n                    \"payable_amount\": 191367.0\r\n                }\r\n            ],\r\n            \"baggages_info\": [\r\n                {\r\n                    \"segment_keys\": [\r\n                        \"a14a5ccaacccaec99c33e68ba868475041abf815573cc5efc0908c2b4842257f\",\r\n                        \"d6e1289cb1fbc1491a6195f40ddb224baf6bb93fafc5bed4945f57ee255d12cc\"\r\n                    ],\r\n                    \"leg\": [\r\n                        \"TAS-DXB\",\r\n                        \"DXB-VKO\"\r\n                    ],\r\n                    \"passenger_type\": \"ADT\",\r\n                    \"baggage\": {\r\n                        \"value\": 35,\r\n                        \"unit\": \"kg\",\r\n                        \"size\": {\r\n                            \"height\": null,\r\n                            \"width\": null,\r\n                            \"length\": null,\r\n                            \"unit\": \"\"\r\n                        }\r\n                    },\r\n                    \"hand_baggage\": {\r\n                        \"value\": 1,\r\n                        \"unit\": \"pc\",\r\n                        \"weight\": 0,\r\n                        \"size\": {\r\n                            \"height\": null,\r\n                            \"width\": null,\r\n                            \"length\": null,\r\n                            \"unit\": \"\"\r\n                        }\r\n                    },\r\n                    \"description\": \"\"\r\n                }\r\n            ],\r\n            \"fares_info\": [\r\n                {\r\n                    \"segment_keys\": [\r\n                        \"a14a5ccaacccaec99c33e68ba868475041abf815573cc5efc0908c2b4842257f\",\r\n                        \"d6e1289cb1fbc1491a6195f40ddb224baf6bb93fafc5bed4945f57ee255d12cc\"\r\n                    ],\r\n                    \"leg\": [\r\n                        \"TAS-DXB\",\r\n                        \"DXB-VKO\"\r\n                    ],\r\n                    \"passenger_type\": \"ADT\",\r\n                    \"seats\": 2,\r\n                    \"upsell\": {\r\n                        \"name\": \"PUBL\",\r\n                        \"services\": []\r\n                    },\r\n                    \"fare_code\": \"XLOWFIN1\",\r\n                    \"service_class\": \"Economy\",\r\n                    \"service_class_code\": \"Y\",\r\n                    \"booking_class\": \"E\",\r\n                    \"description\": \"\"\r\n                }\r\n            ],\r\n            \"routes\": [\r\n                {\r\n                    \"route_index\": 1,\r\n                    \"direction\": \"TAS-VKO\",\r\n                    \"stops\": 1,\r\n                    \"trip_time_minutes\": 285,\r\n                    \"flight_time_minutes\": 450,\r\n                    \"segments\": [\r\n                        {\r\n                            \"segment_index\": 1,\r\n                            \"segment_key\": \"a14a5ccaacccaec99c33e68ba868475041abf815573cc5efc0908c2b4842257f\",\r\n                            \"leg\": \"TAS-DXB\",\r\n                            \"flight_number\": \"2087\",\r\n                            \"departure_country\": \"Uzbekistan\",\r\n                            \"departure_country_code\": \"UZ\",\r\n                            \"departure_city\": \"Tashkent\",\r\n                            \"departure_city_code\": \"TAS\",\r\n                            \"departure_airport\": \"Tashkent International Airport\",\r\n                            \"departure_airport_code\": \"TAS\",\r\n                            \"departure_terminal\": \"\",\r\n                            \"departure_date\": \"2026-04-25\",\r\n                            \"departure_time\": \"04:05\",\r\n                            \"departure_timezone\": \"UTC+05:00\",\r\n                            \"arrival_country\": \"United Arab Emirates\",\r\n                            \"arrival_country_code\": \"AE\",\r\n                            \"arrival_city\": \"Dubai\",\r\n                            \"arrival_city_code\": \"DXB\",\r\n                            \"arrival_airport\": \"Dubai Intl\",\r\n                            \"arrival_airport_code\": \"DXB\",\r\n                            \"arrival_terminal\": \"3\",\r\n                            \"arrival_date\": \"2026-04-25\",\r\n                            \"arrival_time\": \"06:50\",\r\n                            \"arrival_timezone\": \"UTC+04:00\",\r\n                            \"duration_minutes\": 165,\r\n                            \"stop_time_minutes\": 890,\r\n                            \"marketing_airline\": \"Emirates\",\r\n                            \"marketing_airline_code\": \"EK\",\r\n                            \"marketing_airline_logo\": \"https://api2.globaltravel.space/media/airlines/EK.png\",\r\n                            \"operating_airline\": \"flydubai\",\r\n                            \"operating_airline_code\": \"FZ\",\r\n                            \"operating_airline_logo\": \"https://api2.globaltravel.space/media/airlines/FZ.png\",\r\n                            \"seatmap_availability\": false,\r\n                            \"services_availability\": false,\r\n                            \"airplane_info\": {\r\n                                \"airplane\": \"\",\r\n                                \"airplane_code\": \"\",\r\n                                \"seat_width\": \"\",\r\n                                \"seat_angle\": \"\",\r\n                                \"seat_scheme\": \"\",\r\n                                \"seat_distance\": \"\",\r\n                                \"has_wifi\": false\r\n                            }\r\n                        },\r\n                        {\r\n                            \"segment_index\": 2,\r\n                            \"segment_key\": \"d6e1289cb1fbc1491a6195f40ddb224baf6bb93fafc5bed4945f57ee255d12cc\",\r\n                            \"leg\": \"DXB-VKO\",\r\n                            \"flight_number\": \"2284\",\r\n                            \"departure_country\": \"United Arab Emirates\",\r\n                            \"departure_country_code\": \"AE\",\r\n                            \"departure_city\": \"Dubai\",\r\n                            \"departure_city_code\": \"DXB\",\r\n                            \"departure_airport\": \"Dubai Intl\",\r\n                            \"departure_airport_code\": \"DXB\",\r\n                            \"departure_terminal\": \"2\",\r\n                            \"departure_date\": \"2026-04-25\",\r\n                            \"departure_time\": \"21:40\",\r\n                            \"departure_timezone\": \"UTC+04:00\",\r\n                            \"arrival_country\": \"Russia\",\r\n                            \"arrival_country_code\": \"RU\",\r\n                            \"arrival_city\": \"Moscow\",\r\n                            \"arrival_city_code\": \"MOW\",\r\n                            \"arrival_airport\": \"Vnukovo Intl\",\r\n                            \"arrival_airport_code\": \"VKO\",\r\n                            \"arrival_terminal\": \"\",\r\n                            \"arrival_date\": \"2026-04-26\",\r\n                            \"arrival_time\": \"02:25\",\r\n                            \"arrival_timezone\": \"UTC+03:00\",\r\n                            \"duration_minutes\": 285,\r\n                            \"stop_time_minutes\": 0,\r\n                            \"marketing_airline\": \"Emirates\",\r\n                            \"marketing_airline_code\": \"EK\",\r\n                            \"marketing_airline_logo\": \"https://api2.globaltravel.space/media/airlines/EK.png\",\r\n                            \"operating_airline\": \"flydubai\",\r\n                            \"operating_airline_code\": \"FZ\",\r\n                            \"operating_airline_logo\": \"https://api2.globaltravel.space/media/airlines/FZ.png\",\r\n                            \"seatmap_availability\": false,\r\n                            \"services_availability\": false,\r\n                            \"airplane_info\": {\r\n                                \"airplane\": \"\",\r\n                                \"airplane_code\": \"\",\r\n                                \"seat_width\": \"\",\r\n                                \"seat_angle\": \"\",\r\n                                \"seat_scheme\": \"\",\r\n                                \"seat_distance\": \"\",\r\n                                \"has_wifi\": false\r\n                            }\r\n                        }\r\n                    ]\r\n                }\r\n            ],\r\n            \"provider\": {\r\n                \"provider_id\": \"a81c005e965a458683dd89e1402491be\",\r\n                \"name\": \"Alpha\",\r\n                \"index\": null,\r\n                \"type\": \"own\",\r\n                \"is_charter\": false\r\n            },\r\n            \"supplier_provider\": {\r\n                \"provider_name\": \"\",\r\n                \"provider_office\": \"\"\r\n            }\r\n        },\r\n        {\r\n            \"offer_id\": \"e0aa7116-925a-4460-b74a-883070ced5d7\",\r\n            \"price_info\": {\r\n                \"price\": 310721.0,\r\n                \"currency\": \"INR\",\r\n                \"fee_amount\": 0.0,\r\n                \"base_amount\": 290560.0,\r\n                \"commission_amount\": 0.0,\r\n                \"from_commission_amount\": 0.0,\r\n                \"to_commission_amount\": 0.0\r\n            },\r\n            \"upsell\": false,\r\n            \"booking\": true,\r\n            \"is_baggage_info_provided_by_pax\": false,\r\n            \"is_no_changing_airport\": false,\r\n            \"price_details\": [\r\n                {\r\n                    \"passenger_type\": \"ADT\",\r\n                    \"currency\": \"INR\",\r\n                    \"quantity\": 1,\r\n                    \"single_base_amount\": 290560.0,\r\n                    \"single_tax_amount\": 20161.0,\r\n                    \"single_tax_details\": [],\r\n                    \"fee_amount\": 0.0,\r\n                    \"to_commission_amount\": 0,\r\n                    \"commission_amount\": 0.0,\r\n                    \"single_total_amount\": 310721.0,\r\n                    \"base_total_amount\": 290560.0,\r\n                    \"tax_total_amount\": 20161.0,\r\n                    \"total_amount\": 310721.0,\r\n                    \"payable_amount\": 310721.0\r\n                }\r\n            ],\r\n            \"baggages_info\": [\r\n                {\r\n                    \"segment_keys\": [\r\n                        \"f28025c8fe32aea56bada66a2b5189bb1658d9bf6c0cdf1d2130d304902dbf30\",\r\n                        \"a676df65c9f5254b0f11e61bc463db050cce516972d6741e469237d06bbef041\",\r\n                        \"3d22fb898ad6576be8050f8343e6b16dd51378f98dfd0ed44f9d89a4dffd8fb4\"\r\n                    ],\r\n                    \"leg\": [\r\n                        \"TAS-KBL\",\r\n                        \"KBL-AUH\",\r\n                        \"AUH-SVO\"\r\n                    ],\r\n                    \"passenger_type\": \"ADT\",\r\n                    \"baggage\": {\r\n                        \"value\": 40,\r\n                        \"unit\": \"kg\",\r\n                        \"size\": {\r\n                            \"height\": null,\r\n                            \"width\": null,\r\n                            \"length\": null,\r\n                            \"unit\": \"\"\r\n                        }\r\n                    },\r\n                    \"hand_baggage\": {\r\n                        \"value\": 1,\r\n                        \"unit\": \"pc\",\r\n                        \"weight\": 7,\r\n                        \"size\": {\r\n                            \"height\": null,\r\n                            \"width\": null,\r\n                            \"length\": null,\r\n                            \"unit\": \"\"\r\n                        }\r\n                    },\r\n                    \"description\": \"\"\r\n                }\r\n            ],\r\n            \"fares_info\": [\r\n                {\r\n                    \"segment_keys\": [\r\n                        \"f28025c8fe32aea56bada66a2b5189bb1658d9bf6c0cdf1d2130d304902dbf30\"\r\n                    ],\r\n                    \"leg\": [\r\n                        \"TAS-KBL\"\r\n                    ],\r\n                    \"passenger_type\": \"ADT\",\r\n                    \"seats\": 2,\r\n                    \"upsell\": {\r\n                        \"name\": \"PUBL\",\r\n                        \"services\": []\r\n                    },\r\n                    \"fare_code\": \"YNN00FEY\",\r\n                    \"service_class\": \"Economy\",\r\n                    \"service_class_code\": \"Y\",\r\n                    \"booking_class\": \"E\",\r\n                    \"description\": \"\"\r\n                },\r\n                {\r\n                    \"segment_keys\": [\r\n                        \"a676df65c9f5254b0f11e61bc463db050cce516972d6741e469237d06bbef041\",\r\n                        \"3d22fb898ad6576be8050f8343e6b16dd51378f98dfd0ed44f9d89a4dffd8fb4\"\r\n                    ],\r\n                    \"leg\": [\r\n                        \"KBL-AUH\",\r\n                        \"AUH-SVO\"\r\n                    ],\r\n                    \"passenger_type\": \"ADT\",\r\n                    \"seats\": 2,\r\n                    \"upsell\": {\r\n                        \"name\": \"PUBL\",\r\n                        \"services\": []\r\n                    },\r\n                    \"fare_code\": \"YNN00FEY\",\r\n                    \"service_class\": \"Economy\",\r\n                    \"service_class_code\": \"Y\",\r\n                    \"booking_class\": \"Y\",\r\n                    \"description\": \"\"\r\n                }\r\n            ],\r\n            \"routes\": [\r\n                {\r\n                    \"route_index\": 1,\r\n                    \"direction\": \"TAS-SVO\",\r\n                    \"stops\": 2,\r\n                    \"trip_time_minutes\": 290,\r\n                    \"flight_time_minutes\": 520,\r\n                    \"segments\": [\r\n                        {\r\n                            \"segment_index\": 1,\r\n                            \"segment_key\": \"f28025c8fe32aea56bada66a2b5189bb1658d9bf6c0cdf1d2130d304902dbf30\",\r\n                            \"leg\": \"TAS-KBL\",\r\n                            \"flight_number\": \"9098\",\r\n                            \"departure_country\": \"Uzbekistan\",\r\n                            \"departure_country_code\": \"UZ\",\r\n                            \"departure_city\": \"Tashkent\",\r\n                            \"departure_city_code\": \"TAS\",\r\n                            \"departure_airport\": \"Tashkent International Airport\",\r\n                            \"departure_airport_code\": \"TAS\",\r\n                            \"departure_terminal\": \"2\",\r\n                            \"departure_date\": \"2026-04-25\",\r\n                            \"departure_time\": \"12:50\",\r\n                            \"departure_timezone\": \"UTC+05:00\",\r\n                            \"arrival_country\": \"Afghanistan\",\r\n                            \"arrival_country_code\": \"AF\",\r\n                            \"arrival_city\": \"Kabul\",\r\n                            \"arrival_city_code\": \"KBL\",\r\n                            \"arrival_airport\": \"Khwaja Rawash\",\r\n                            \"arrival_airport_code\": \"KBL\",\r\n                            \"arrival_terminal\": \"I\",\r\n                            \"arrival_date\": \"2026-04-25\",\r\n                            \"arrival_time\": \"13:50\",\r\n                            \"arrival_timezone\": \"UTC+04:30\",\r\n                            \"duration_minutes\": 60,\r\n                            \"stop_time_minutes\": 330,\r\n                            \"marketing_airline\": \"Kam Air\",\r\n                            \"marketing_airline_code\": \"RQ\",\r\n                            \"marketing_airline_logo\": \"https://api2.globaltravel.space/media/airlines/RQ.png\",\r\n                            \"operating_airline\": \"Kam Air\",\r\n                            \"operating_airline_code\": \"RQ\",\r\n                            \"operating_airline_logo\": \"https://api2.globaltravel.space/media/airlines/RQ.png\",\r\n                            \"seatmap_availability\": false,\r\n                            \"services_availability\": false,\r\n                            \"airplane_info\": {\r\n                                \"airplane\": \"\",\r\n                                \"airplane_code\": \"\",\r\n                                \"seat_width\": \"\",\r\n                                \"seat_angle\": \"\",\r\n                                \"seat_scheme\": \"\",\r\n                                \"seat_distance\": \"\",\r\n                                \"has_wifi\": false\r\n                            }\r\n                        },\r\n                        {\r\n                            \"segment_index\": 2,\r\n                            \"segment_key\": \"a676df65c9f5254b0f11e61bc463db050cce516972d6741e469237d06bbef041\",\r\n                            \"leg\": \"KBL-AUH\",\r\n                            \"flight_number\": \"311\",\r\n                            \"departure_country\": \"Afghanistan\",\r\n                            \"departure_country_code\": \"AF\",\r\n                            \"departure_city\": \"Kabul\",\r\n                            \"departure_city_code\": \"KBL\",\r\n                            \"departure_airport\": \"Khwaja Rawash\",\r\n                            \"departure_airport_code\": \"KBL\",\r\n                            \"departure_terminal\": \"I\",\r\n                            \"departure_date\": \"2026-04-25\",\r\n                            \"departure_time\": \"19:20\",\r\n                            \"departure_timezone\": \"UTC+04:30\",\r\n                            \"arrival_country\": \"United Arab Emirates\",\r\n                            \"arrival_country_code\": \"AE\",\r\n                            \"arrival_city\": \"Abu Dhabi\",\r\n                            \"arrival_city_code\": \"AUH\",\r\n                            \"arrival_airport\": \"International\",\r\n                            \"arrival_airport_code\": \"AUH\",\r\n                            \"arrival_terminal\": \"A\",\r\n                            \"arrival_date\": \"2026-04-25\",\r\n                            \"arrival_time\": \"22:10\",\r\n                            \"arrival_timezone\": \"UTC+04:00\",\r\n                            \"duration_minutes\": 170,\r\n                            \"stop_time_minutes\": 260,\r\n                            \"marketing_airline\": \"Etihad Airways\",\r\n                            \"marketing_airline_code\": \"EY\",\r\n                            \"marketing_airline_logo\": \"https://api2.globaltravel.space/media/airlines/EY.png\",\r\n                            \"operating_airline\": \"Etihad Airways\",\r\n                            \"operating_airline_code\": \"EY\",\r\n                            \"operating_airline_logo\": \"https://api2.globaltravel.space/media/airlines/EY.png\",\r\n                            \"seatmap_availability\": false,\r\n                            \"services_availability\": false,\r\n                            \"airplane_info\": {\r\n                                \"airplane\": \"\",\r\n                                \"airplane_code\": \"\",\r\n                                \"seat_width\": \"\",\r\n                                \"seat_angle\": \"\",\r\n                                \"seat_scheme\": \"\",\r\n                                \"seat_distance\": \"\",\r\n                                \"has_wifi\": false\r\n                            }\r\n                        },\r\n                        {\r\n                            \"segment_index\": 3,\r\n                            \"segment_key\": \"3d22fb898ad6576be8050f8343e6b16dd51378f98dfd0ed44f9d89a4dffd8fb4\",\r\n                            \"leg\": \"AUH-SVO\",\r\n                            \"flight_number\": \"841\",\r\n                            \"departure_country\": \"United Arab Emirates\",\r\n                            \"departure_country_code\": \"AE\",\r\n                            \"departure_city\": \"Abu Dhabi\",\r\n                            \"departure_city_code\": \"AUH\",\r\n                            \"departure_airport\": \"International\",\r\n                            \"departure_airport_code\": \"AUH\",\r\n                            \"departure_terminal\": \"A\",\r\n                            \"departure_date\": \"2026-04-26\",\r\n                            \"departure_time\": \"02:30\",\r\n                            \"departure_timezone\": \"UTC+04:00\",\r\n                            \"arrival_country\": \"Russia\",\r\n                            \"arrival_country_code\": \"RU\",\r\n                            \"arrival_city\": \"Moscow\",\r\n                            \"arrival_city_code\": \"MOW\",\r\n                            \"arrival_airport\": \"Sheremetyevo Intl\",\r\n                            \"arrival_airport_code\": \"SVO\",\r\n                            \"arrival_terminal\": \"C\",\r\n                            \"arrival_date\": \"2026-04-26\",\r\n                            \"arrival_time\": \"07:20\",\r\n                            \"arrival_timezone\": \"UTC+03:00\",\r\n                            \"duration_minutes\": 290,\r\n                            \"stop_time_minutes\": 0,\r\n                            \"marketing_airline\": \"Etihad Airways\",\r\n                            \"marketing_airline_code\": \"EY\",\r\n                            \"marketing_airline_logo\": \"https://api2.globaltravel.space/media/airlines/EY.png\",\r\n                            \"operating_airline\": \"Etihad Airways\",\r\n                            \"operating_airline_code\": \"EY\",\r\n                            \"operating_airline_logo\": \"https://api2.globaltravel.space/media/airlines/EY.png\",\r\n                            \"seatmap_availability\": false,\r\n                            \"services_availability\": false,\r\n                            \"airplane_info\": {\r\n                                \"airplane\": \"\",\r\n                                \"airplane_code\": \"\",\r\n                                \"seat_width\": \"\",\r\n                                \"seat_angle\": \"\",\r\n                                \"seat_scheme\": \"\",\r\n                                \"seat_distance\": \"\",\r\n                                \"has_wifi\": false\r\n                            }\r\n                        }\r\n                    ]\r\n                }\r\n            ],\r\n            \"provider\": {\r\n                \"provider_id\": \"a81c005e965a458683dd89e1402491be\",\r\n                \"name\": \"Alpha\",\r\n                \"index\": null,\r\n                \"type\": \"own\",\r\n                \"is_charter\": false\r\n            },\r\n            \"supplier_provider\": {\r\n                \"provider_name\": \"\",\r\n                \"provider_office\": \"\"\r\n            }\r\n        }\r\n    ]\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/offers/import",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "offers",
+            "import"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "offer/search",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"directions\": [\r\n    {\r\n      \"departure\": \"TAS\",\r\n      \"arrival\": \"VKO\",\r\n      \"departure_date\": \"2026-05-01\"\r\n    }\r\n  ],\r\n    \"adt\": 1,\r\n    \"chd\": 0,\r\n    \"inf\": 0,\r\n    \"ins\": 0,\r\n    \"class\": \"E\",\r\n    \"flexible\": true,\r\n    // \"direct\": true,\r\n    \"airlines\": [],\r\n    \"passengers_ids\": []\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/offers/search",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "offers",
+            "search"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "blacklist",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var response = pm.response.json();",
+              "pm.collectionVariables.set(\"blacklist_id\", response.id);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"origin\": \"TAS\",\n  \"destination\": \"MOW\",\n  \"trip_type\": \"OW\",\n  \"departure_date\": \"2026-04-25\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/blacklist",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "blacklist"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "blacklist",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": ""
+        },
+        "url": {
+          "raw": "{{base_url}}/blacklist",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "blacklist"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "blacklist/id",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/blacklist/{{blacklist_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "blacklist",
+            "{{blacklist_id}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "blacklist/id",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"origin\": \"TAS\",\n  \"destination\": \"MOW\",\n  \"trip_type\": \"OW\",\n  \"departure_date\": \"2026-04-25\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/blacklist/{{blacklist_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "blacklist",
+            "{{blacklist_id}}"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": ""
+    },
+    {
+      "key": "access_token",
+      "value": ""
+    },
+    {
+      "key": "refresh_token",
+      "value": ""
+    },
+    {
+      "key": "blacklist_id",
+      "value": ""
+    },
+    {
+      "key": "rule_if",
+      "value": ""
+    }
+  ]
+}
