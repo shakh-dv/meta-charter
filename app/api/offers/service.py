@@ -46,7 +46,7 @@ class OfferService:
     async def search_offers(self, search: OfferSearchRequest) -> list:
         await self._ensure_not_blacklisted(search)
 
-        db_offers = await OfferRepository.search_offers(self.session, self.user_id, search)
+        db_offers = await OfferRepository(self.session).search_offers(self.user_id, search)
         if db_offers:
             return [{**o["raw_json"], "search_hash": o["search_hash"]} for o in db_offers]
 
@@ -73,7 +73,7 @@ class OfferService:
 
     @staticmethod
     async def get_offers(session: AsyncSession):
-        return await OfferRepository.get_offers(session)
+        return await OfferRepository(session).get_offers()
 
     @staticmethod
     async def run_cleanup() -> None:
@@ -81,7 +81,7 @@ class OfferService:
         logger.info("Starting expired offer cleanup...")
         async with AsyncSessionLocal() as session:
             try:
-                deleted = await OfferRepository.clear_expired_offers(session)
+                deleted = await OfferRepository(session).clear_expired_offers()
                 await session.commit()
                 logger.info("Cleanup complete: deleted=%s", deleted)
             except Exception as exc:
@@ -206,7 +206,7 @@ class OfferService:
             except Exception as exc:
                 logger.warning("Skipping invalid offer offer_id=%s error=%s", getattr(offer.validated, "offer_id", None), exc)
         if rows:
-            await OfferRepository.batch_upsert(self.session, rows)
+            await OfferRepository(self.session).batch_upsert(rows)
             await self.session.commit()
 
     @staticmethod

@@ -1,9 +1,10 @@
 from datetime import datetime, timezone
-from typing import Any
+from typing import Any, cast
 from uuid import UUID
 
 from sqlalchemy import delete, func, select, and_
 from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.engine import CursorResult
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.offers import Offer
@@ -11,8 +12,10 @@ from app.models.offers import Offer
 
 class OfferRepository:
 
-    @staticmethod
-    async def batch_upsert(session: AsyncSession, value: list[dict]):
+    def __init__(self, session: AsyncSession) -> None:
+        self.session = session
+
+    async def batch_upsert(self, value: list[dict]):
         if not value:
             return
 
@@ -36,18 +39,16 @@ class OfferRepository:
             },
         )
 
-        await session.execute(stmt)
+        await self.session.execute(stmt)
 
-    @staticmethod
-    async def get_offers(session: AsyncSession):
+    async def get_offers(self) -> list[Offer]:
         data = select(Offer)
 
-        result = await session.execute(data)
-        return result.scalars().all()
+        result = await self.session.execute(data)
+        return list(result.scalars().all())
     
     
-    @staticmethod
-    async def search_offers(session: AsyncSession, user_id: UUID, search) -> list[dict[str, Any]]:
+    async def search_offers(self, user_id: UUID, search) -> list[dict[str, Any]]:
         filters = [Offer.is_active.is_(True), Offer.user_id == user_id]
 
         # --- ЛОГИКА НАПРАВЛЕНИЙ (Directions) ---
@@ -91,15 +92,14 @@ class OfferRepository:
             filters.append(Offer.provider_id == search.provider)
 
         stmt = select(Offer.raw_json, Offer.search_hash).where(and_(*filters))
-        result = await session.execute(stmt)
+        result = await self.session.execute(stmt)
         return [
             {"raw_json": row.raw_json, "search_hash": row.search_hash}
             for row in result.all()
         ]
     
 
-    @staticmethod
-    async def clear_expired_offers(session: AsyncSession):
+    async def clear_expired_offers(self):
         """
         Удаляет записи из БД:
         1. Которые уже вылетили (departure_date < сегодня)
@@ -110,7 +110,7 @@ class OfferRepository:
             Offer.departure_date < today,
         )
 
-        result = await session.execute(stmt)
+        result = cast(CursorResult[Any], await self.session.execute(stmt))
         return result.rowcount
 
         
